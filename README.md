@@ -4,23 +4,8 @@ A modern, production-ready NestJS template with Fastify, MongoDB, authentication
 
 ## 🎯 Quick Start - Use This Template
 
-### Method 1: Using Nest CLI (Recommended)
 
-```bash
-# Create a new project using this template
-nest new my-app -p npm -g https://github.com/1devspace/nestjs-template
-
-# Navigate to your project
-cd my-app
-
-# Run the interactive setup (optional)
-npm run setup
-
-# Start developing
-npm run dev
-```
-
-### Method 2: GitHub Template Button
+### Method 1: GitHub Template Button
 
 1. Click the **"Use this template"** button at the top of this repository
 2. Create your new repository
@@ -34,7 +19,7 @@ npm run setup  # Interactive setup
 npm run dev
 ```
 
-### Method 3: Manual Clone
+### Method 2: Manual Clone
 
 ```bash
 # Clone this repository
