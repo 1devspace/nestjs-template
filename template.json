@@ -1,0 +1,40 @@
+{
+    "name": "nestjs-production-template",
+    "description": "A production-ready NestJS template with Fastify, MongoDB, authentication, email support, and comprehensive security features",
+    "author": "mohamed boukari",
+    "version": "1.0.0",
+    "license": "MIT",
+    "language": "ts",
+    "readme": "README.md",
+    "files": {
+        "include": [
+            "src/**/*",
+            "test/**/*",
+            "scripts/**/*",
+            "nest-cli.json",
+            "tsconfig.json",
+            "tsconfig.build.json",
+            "package.json",
+            ".env.example",
+            ".gitignore",
+            ".prettierrc",
+            "eslint.config.mjs",
+            "Dockerfile",
+            ".dockerignore",
+            "README.md",
+            "SETUP.md",
+            "LICENSE"
+        ],
+        "exclude": [
+            "node_modules",
+            "dist",
+            ".git",
+            ".env",
+            "*.log",
+            "coverage"
+        ]
+    },
+    "scripts": {
+        "postInstall": "npm run setup"
+    }
+}

@@ -1,0 +1,127 @@
+---
+alwaysApply: false
+---
+
+Project: app-name-api
+Stack: NestJS + Fastify + Mongoose (schemas in src/modules/\*\*/models), Jest unit tests
+Scope: Follow ONLY the conventions present in this repo’s structure
+
+GENERAL
+
+- Always use module-per-feature under src/modules/<feature>.
+- Keep controllers thin; put business logic in services.
+- Use kebab-case for filenames; PascalCase for classes; camelCase for methods/variables.
+
+MODULE LAYOUT (required)
+
+- Each feature module must match the existing pattern:
+  src/modules/<feature>/
+  - <feature>.module.ts ← Nest module
+  - controllers/ ← HTTP controllers only
+  - services/ ← Business logic
+  - dtos/ ← Request/response DTOs (keep existing per-module choice)
+  - models/ ← Mongoose schemas: \*.schema.ts
+  - serializations/ ← Response mappers/serializers
+  - types/ ← Shared types for this module only
+- Never introduce new top-level folders under src/ except: modules/, database/, utils/, email-templates/.
+
+NEST BASICS
+
+- Register all services/providers in the module’s providers[] and export only what’s needed by other modules.
+- Import dependent modules rather than using deep relative imports across modules.
+- Controllers define routes and call services. No DB or cross-cutting logic in controllers.
+- Follow REST naming based on module (e.g., UsersController -> route /users).
+
+DTOS AND SERIALIZATION
+
+- Place DTOs in the module’s dto/ or dtos/ directory. File names: <action>-<entity>.dto.ts (e.g., create-user.dto.ts).
+- Responses should be mapped via serializations/ when shaping output or hiding internals. File names: <feature>-serialize.ts or <entity>.serialize.ts matching existing patterns in the module.
+- Do not import DTOs or serializers across modules; keep them feature-local.
+
+DATABASE (models/)
+
+- Define Mongoose schemas in models/ with file name: <entity>.schema.ts (e.g., department.schema.ts).
+- Keep schema definition and indexes in the schema file. Do not query DB from controllers; only services may access models.
+- When adding a schema, ensure the provider is registered in the module and injected where needed.
+
+AUTH AND GUARDS
+
+- Use existing guards under src/modules/auth/guards for access control:
+  - admin.guard.ts, auth.guard.ts, super-admin.guard.ts
+- Apply guards at controller or route level; do not bypass them in code.
+- When adding privileged endpoints, choose the narrowest appropriate guard.
+
+ERROR HANDLING
+
+- Use the global exception filter from src/utils/Exceptions.filter.ts. Throw standard Nest exceptions from services (e.g., NotFoundException) and let the filter handle formatting.
+- Do not return raw errors or stack traces from controllers.
+
+FASTIFY
+
+- Assume Fastify is the HTTP adapter. Avoid Express-specific APIs or types (e.g., Request/Response from Express). Use Nest’s Request/Response abstractions when necessary.
+
+EMAIL
+
+- Email templates live under src/email-templates/ (\*.hbs). Place email send logic in src/modules/mail/services/mail.service.ts. Do not send mail from controllers directly.
+
+TESTS (Jest)
+
+- Place unit tests under test/unit/ matching current pattern:
+  - controllers: test/unit/controllers/<feature>.controller.spec.ts
+  - services: test/unit/services/<feature>.service.spec.ts
+- New endpoints must include or update unit tests for both controller and service paths where logic changes.
+
+ROUTING AND NAMING
+
+- Controller route prefix: the module’s feature name in kebab-case (e.g., oss-llm-board -> /oss-llm-board).
+- Method names: verb + noun (e.g., getUser, updateDepartment).
+- DTO classes: PascalCase with suffix Dto (e.g., CreateUserDto, UpdateUserDto).
+- Serialization classes: PascalCase with suffix Serialize or Serializer only if consistent with existing files in that module; prefer mirroring the module’s current naming pattern.
+
+CROSS-MODULE TYPES
+
+- Keep types local in src/modules/<feature>/types. Promote a type to a shared place only if used across 3+ modules and agreed upon in a PR; otherwise duplicate locally to avoid coupling.
+
+CHANGES AND EDITS (checklist)
+
+- When adding an endpoint:
+  1. Add/adjust DTOs in dto(s)/.
+  2. Add controller method under controllers/.
+  3. Implement service logic under services/.
+  4. If response shape differs from raw model, add/update a serializer under serializations/.
+  5. Ensure the module exports/imports are correct.
+  6. Add/extend Jest unit tests under test/unit/.
+- When adding a data model:
+  1. Create <entity>.schema.ts under models/.
+  2. Register schema/provider in the module.
+  3. Inject and use the model in the service only.
+  4. Update serializers if response shape changes.
+  5. Add/extend unit tests.
+
+STYLE AND LINT
+
+- Preserve existing formatting and indentation.
+- Do not refactor unrelated code in the same edit.
+- Follow existing ESLint/TS config; avoid any-ts or unsafe casts.
+- Prefer explicit types for public APIs and service method parameters/returns.
+
+BOUNDARIES
+
+- Do not rename existing folders (dto vs dtos) within current modules. For new modules, use dto/.
+- Do not create global helpers unless the same logic is needed in 3+ modules and fits under src/utils/.
+- Do not introduce new frameworks or adapters; stick with Nest + Fastify + Mongoose.
+
+SECURITY
+
+- Never log secrets or tokens.
+- Validate and sanitize inbound data at the DTO layer when the module already uses it; otherwise keep typing strict and handle errors in services.
+
+PERFORMANCE
+
+- Keep controllers synchronous to the extent the service allows; offload heavy work to services.
+- Use indexes in schemas for frequent queries; keep them in the schema file.
+
+WHAT NOT TO CHANGE
+
+- Top-level folders under src/: app files, database/, utils/, email-templates/, modules/ stay as-is.
+- Existing module boundaries and guards; add rather than modify unless required by the feature.
