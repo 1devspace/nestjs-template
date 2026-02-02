@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/main.ts"],
+  "project": ["src/**/*.ts"],
+  "ignore": ["**/*.d.ts", "**/*.spec.ts", "test/**/*"],
+  "ignoreExportsUsedInFile": true,
+  "ignoreDependencies": [
+    "@nestjs/platform-express",
+    "source-map-support",
+    "ts-loader"
+  ],
+  "rules": {
+    "exports": "off"
+  }
+}
