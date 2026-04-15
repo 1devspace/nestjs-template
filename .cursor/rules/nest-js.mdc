@@ -104,6 +104,7 @@ STYLE AND LINT
 - Do not refactor unrelated code in the same edit.
 - Follow existing ESLint/TS config; avoid any-ts or unsafe casts.
 - Prefer explicit types for public APIs and service method parameters/returns.
+- Never use `unknown` as a type. Always use explicit, specific types instead.
 
 BOUNDARIES
 
